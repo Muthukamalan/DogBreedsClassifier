@@ -1,57 +1,83 @@
-from typing import Any, Dict
+import sys
+import os
+from functools import wraps
+import lightning as pl
+import torch
+from loguru import logger
+import torch.nn.functional as F
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from lightning_utilities.core.rank_zero import rank_zero_only
-from omegaconf import OmegaConf
 
-from src.utils import pylogger
-
-log = pylogger.RankedLogger(__name__, rank_zero_only=True)
-
-
-@rank_zero_only
-def log_hyperparameters(object_dict: Dict[str, Any]) -> None:
-    """Controls which config parts are saved by Lightning loggers.
-
-    Additionally saves:
-        - Number of model parameters
-
-    :param object_dict: A dictionary containing the following objects:
-        - `"cfg"`: A DictConfig object containing the main config.
-        - `"model"`: The Lightning model.
-        - `"trainer"`: The Lightning trainer.
-    """
-    hparams = {}
-
-    cfg = OmegaConf.to_container(object_dict["cfg"])
-    model = object_dict["model"]
-    trainer = object_dict["trainer"]
-
-    if not trainer.logger:
-        log.warning("Logger not found! Skipping hyperparameter logging...")
-        return
-
-    hparams["model"] = cfg["model"]
-
-    # save number of model parameters
-    hparams["model/params/total"] = sum(p.numel() for p in model.parameters())
-    hparams["model/params/trainable"] = sum(
-        p.numel() for p in model.parameters() if p.requires_grad
+def setup_logger(log_file):
+    logger.remove()
+    logger.add(
+        sys.stderr,
+        format='<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>',
     )
-    hparams["model/params/non_trainable"] = sum(
-        p.numel() for p in model.parameters() if not p.requires_grad
+    logger.add(log_file, rotation='10 MB')
+
+
+def task_wrapper(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        func_name = func.__name__
+        logger.info(f'Starting {func_name}')
+        try:
+            result = func(*args, **kwargs)
+            logger.info(f'Finished {func_name}')
+            return result
+        except Exception as e:
+            logger.exception(f'Error in {func_name}: {str(e)}')
+            raise
+
+    return wrapper
+
+
+def get_rich_progress():
+    return Progress(
+        SpinnerColumn(),
+        TextColumn('[progress.description]{task.description}'),
+        transient=True,
     )
 
-    hparams["data"] = cfg["data"]
-    hparams["trainer"] = cfg["trainer"]
 
-    hparams["callbacks"] = cfg.get("callbacks")
-    hparams["extras"] = cfg.get("extras")
+def plot_confusion_matrix(
+    model: pl.LightningModule, datamodule: pl.LightningDataModule, path: str = '.'
+):
+    model.eval()
+    os.makedirs(path, exist_ok=True)
 
-    hparams["task_name"] = cfg.get("task_name")
-    hparams["tags"] = cfg.get("tags")
-    hparams["ckpt_path"] = cfg.get("ckpt_path")
-    hparams["seed"] = cfg.get("seed")
+    def fn(mode: str, loader: torch.utils.data.DataLoader):
+        y_pred = []
+        y_true = []
+        for batch in loader():
+            x, y = batch
+            logits = model(x)
+            loss = F.cross_entropy(logits, y)
+            preds = F.softmax(logits, dim=-1)
+            # preds,true comes in batch(32)
+            preds = torch.argmax(preds, dim=-1)
+            for i, j in zip(preds, y):
+                # print(y.shape,preds.shape,type(y),type(preds))
+                y_true.append(j.item())
+                y_pred.append(i.item())
 
-    # send hparams to all loggers
-    for logger in trainer.loggers:
-        logger.log_hyperparams(hparams)
+        cm = confusion_matrix(y_true=y_true, y_pred=y_pred)
+        print(cm)
+        disp = ConfusionMatrixDisplay(
+            confusion_matrix=cm, display_labels=loader().dataset.classes
+        )
+        disp.plot(xticks_rotation='vertical', colorbar=False).figure_.savefig(
+            os.path.join(path, f'{mode}_confusion_matrix.png')
+        )  # f'{path}{mode}_confusion_matrix.png')
+
+    for mode, loader in zip(
+        ['train', 'test', 'val'],
+        [
+            datamodule.train_dataloader,
+            datamodule.test_dataloader,
+            datamodule.val_dataloader,
+        ],
+    ):
+        fn(mode=mode, loader=loader)

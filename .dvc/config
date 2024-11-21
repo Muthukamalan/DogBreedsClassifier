@@ -1,0 +1,6 @@
+[core]
+    analytics = false
+    autostage = true
+    remote = dogs
+['remote "dogs"']
+    url = s3://mhema-dog-breeds-bucket

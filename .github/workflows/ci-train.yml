@@ -1,0 +1,92 @@
+# name of my workflow
+name: TrainPipeline
+
+# events 
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [ "main" ]
+
+
+
+
+# groups set of actions that needs to execute
+jobs:
+  train:
+    env:
+      # (or) make sure readS3FullAccess ROLE attached to Runner
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  
+    runs-on: self-hosted
+
+    steps:
+      # copy code to machine
+      - uses: actions/checkout@v4
+
+      - name: install aws-cli
+        run: |
+          sudo apt install curl unzip -y
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+
+      # - name: check s3
+      #   run: |
+      #     aws s3 ls
+      #     aws s3 ls s3://mhema-dog-breeds-bucket
+
+      # install deps
+      - name: Set requirements & train🐒 & push to s3🪣
+        run: |
+          python3 -m venv .venv/
+          source .venv/bin/activate
+          pip install -r requirements.txt
+          make pull
+          make showoff
+          make train
+          
+
+      # # removing dataset & old confusion-matrcies 🌀😶‍🌫️
+      # - name: cleaning existing files 🪥
+      #   run: make trash
+
+      # # download dataset
+      # - name: download dataset from s3
+      #   run: |
+      #     pwd
+      #     which python
+      #     dvc --version
+      #     dvc pull
+
+      # - name: make sure tensorboard not starts
+      #   run: make showoff
+
+      # # comment later 🙊
+      # - name: Check model is running
+      #   run: |
+      #     make sshow
+      #     make fastrun
+
+      # uncomment later 🐒🦧🏋️🤾
+      # - name: Run Hparams Search  
+      #   run: |
+      #     make mshow
+      #     make train
+
+      # pushing files to s3
+      # - name: save artifacts
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #   name: artifacts
+      #   path: |
+      #     logs
+      #     outputs/*/*/checkpoints/*.ckpt
+      #     # multirun/*/*/optimization_results.yaml
+
+        # multirun/*/*/*/checkpoints/*.ckpt  
+        # ⛓️‍💥 NOT DOABLE of redudent name convention
+        # Download optimization_results.yaml file
+          
+      # - name: print BEST hparams
+      #   run: cat multirun/*/*/optimization_results.yaml

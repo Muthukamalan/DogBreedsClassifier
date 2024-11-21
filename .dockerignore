@@ -1,0 +1,7 @@
+__pycache__/
+dogs_dataset/
+.env
+logs/
+outputs/
+multirun/
+*.env

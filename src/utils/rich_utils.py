@@ -18,13 +18,13 @@ log = pylogger.RankedLogger(__name__, rank_zero_only=True)
 def print_config_tree(
     cfg: DictConfig,
     print_order: Sequence[str] = (
-        "data",
-        "model",
-        "callbacks",
-        "logger",
-        "trainer",
-        "paths",
-        "extras",
+        'data',
+        'model',
+        'callbacks',
+        'logger',
+        'trainer',
+        'paths',
+        'extras',
     ),
     resolve: bool = False,
     save_to_file: bool = False,
@@ -37,8 +37,8 @@ def print_config_tree(
     :param resolve: Whether to resolve reference fields of DictConfig. Default is ``False``.
     :param save_to_file: Whether to export config to the hydra output folder. Default is ``False``.
     """
-    style = "dim"
-    tree = rich.tree.Tree("CONFIG", style=style, guide_style=style)
+    style = 'dim'
+    tree = rich.tree.Tree('CONFIG', style=style, guide_style=style)
 
     queue = []
 
@@ -63,14 +63,14 @@ def print_config_tree(
         else:
             branch_content = str(config_group)
 
-        branch.add(rich.syntax.Syntax(branch_content, "yaml"))
+        branch.add(rich.syntax.Syntax(branch_content, 'yaml'))
 
     # print config tree
     rich.print(tree)
 
     # save config tree to file
     if save_to_file:
-        with open(Path(cfg.paths.output_dir, "config_tree.log"), "w") as file:
+        with open(Path(cfg.paths.output_dir, 'config_tree.log'), 'w') as file:
             rich.print(tree, file=file)
 
 
@@ -81,19 +81,19 @@ def enforce_tags(cfg: DictConfig, save_to_file: bool = False) -> None:
     :param cfg: A DictConfig composed by Hydra.
     :param save_to_file: Whether to export tags to the hydra output folder. Default is ``False``.
     """
-    if not cfg.get("tags"):
-        if "id" in HydraConfig().cfg.hydra.job:
-            raise ValueError("Specify tags before launching a multirun!")
+    if not cfg.get('tags'):
+        if 'id' in HydraConfig().cfg.hydra.job:
+            raise ValueError('Specify tags before launching a multirun!')
 
-        log.warning("No tags provided in config. Prompting user to input tags...")
-        tags = Prompt.ask("Enter a list of comma separated tags", default="dev")
-        tags = [t.strip() for t in tags.split(",") if t != ""]
+        log.warning('No tags provided in config. Prompting user to input tags...')
+        tags = Prompt.ask('Enter a list of comma separated tags', default='dev')
+        tags = [t.strip() for t in tags.split(',') if t != '']
 
         with open_dict(cfg):
             cfg.tags = tags
 
-        log.info(f"Tags: {cfg.tags}")
+        log.info(f'Tags: {cfg.tags}')
 
     if save_to_file:
-        with open(Path(cfg.paths.output_dir, "tags.log"), "w") as file:
+        with open(Path(cfg.paths.output_dir, 'tags.log'), 'w') as file:
             rich.print(cfg.tags, file=file)

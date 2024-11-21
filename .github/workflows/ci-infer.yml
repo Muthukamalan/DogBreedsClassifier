@@ -1,0 +1,65 @@
+# name of my workflow
+name: InferPipeline
+
+# events 
+on:
+  # workflow_run:
+  #   workflows: ['TrainPipeline']
+  #     types:
+  #       - completed
+  workflow_dispatch:
+  # push:
+  #   branches: [ "main" ]
+  
+
+
+
+
+# groups set of actions that needs to execute
+jobs:
+  inference:
+    # EC2 Instance
+    # runs-on: self-hosted
+    runs-on: ubuntu-latest
+
+    env:
+      # (or) make sure readS3FullAccess ROLE attached to Runner
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  
+
+    steps:
+      # copy code to machine
+      - uses: actions/checkout@v4
+
+      - name: install aws-cli
+        run: |
+          sudo apt install curl unzip -y
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+
+      #  module 'lib' has no attribute 'X509_V_FLAG_NOTIFY_POLICY'
+      - name: fix issue
+        run: |
+          python3 -m pip install pip --upgrade
+          pip install pyopenssl --upgrade
+          
+      # install deps
+      - name: Set requirements
+        run: pip install -r requirements.txt
+
+
+      # removing dataset & old confusion-matrcies 🌀😶‍🌫️
+      - name: cleaning existing files 🪥
+        run: make trash
+      
+      # download dataset
+      - name: download dataset from s3
+        run: dvc pull
+        
+      # sample model already saved!!
+      # confusion matrix saved and printed!!
+      - name: running evaluation on already trained-model::Nov-09-2024-3:51AM
+        run: |
+          make inference

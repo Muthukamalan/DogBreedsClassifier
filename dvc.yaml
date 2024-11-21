@@ -1,0 +1,13 @@
+stages:
+  pull: 
+    cmd: dvc pull
+  fastrun: #train simple model
+    cmd: make fastrun
+  test:
+    cmd: make test
+  train:
+    cmd: make  train
+  eval:
+    cmd: make eval
+  inference:
+    cmd: make inference

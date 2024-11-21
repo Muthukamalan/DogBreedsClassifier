@@ -1,0 +1,14 @@
+schema: '2.0'
+stages:
+  fastrun:
+    cmd: make fastrun
+  pull:
+    cmd: dvc pull
+  train:
+    cmd: make  train
+  eval:
+    cmd: make eval
+  inference:
+    cmd: make inference
+  test:
+    cmd: make test

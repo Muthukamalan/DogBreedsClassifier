@@ -1,0 +1,27 @@
+_target_: src.models.dogs_classifier.DogsBreedClassifier
+
+
+depths: 
+  - 1
+  - 1
+  - 1
+  - 1
+dims:
+  - 3
+  - 6
+  - 12
+  - 18
+head_fn: 'default'
+conv_ratio: 1.
+in_chans: 3
+num_classes: 10
+
+
+pretrained: false  # always 
+model_name: 'Mamba'   # stick to mamba based models
+lr: 1e-3
+weight_decay: 1e-5
+scheduler_factor: 0.1
+scheduler_patience: 5
+min_lr: 1e-6
+trainable: false

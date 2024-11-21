@@ -1,0 +1,67 @@
+# name of my workflow
+name: TestPipeline
+
+# events 
+on:
+  # workflow_run:
+  #   workflows: ['TrainPipeline']
+  #     types:
+  #       - completed
+  workflow_dispatch:
+  # push:
+  #   branches: [ "main" ]
+  
+
+
+
+
+# groups set of actions that needs to execute
+jobs:
+  evaluation:
+    env:
+      # (or) make sure readS3FullAccess ROLE attached to Runner
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  
+    # EC2 Instance
+    runs-on: self-hosted
+
+    steps:
+      # copy code to machine
+      - uses: actions/checkout@v4
+
+
+      - name: install aws-cli
+        run: |
+          sudo apt install curl unzip -y
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+
+
+      # install deps
+      - name: Set requirements & eval 🏋️ & confusion-matrix 🌀😶‍🌫️
+        run: |
+          python3 -m venv .venv/
+          source .venv/bin/activate
+          pip install -r requirements.txt
+          make pull
+          make eval
+
+
+      # # removing dataset & old confusion-matrcies 🌀😶‍🌫️
+      # - name: cleaning existing files 🪥
+      #   run: make trash
+      
+      # # download dataset
+      # - name: download dataset from s3
+      #   run: make pull
+
+      # - name: make sure tensorboard not starts
+      #   run: make showoff
+
+      # hparams already mentioned in configs/eval.yaml
+      # confusion matrix saved and printed!!
+      # - name: running evaluation on already trained-model::Nov-09-2024-3:51AM
+      #   run: |
+      #     make eval

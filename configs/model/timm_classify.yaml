@@ -1,0 +1,15 @@
+_target_: src.models.timm_classifier.TimmClassifier
+
+# Model parameters
+base_model: resnet18
+num_classes: 2
+pretrained: true
+
+# Optimizer parameters
+lr: 1e-3
+weight_decay: 1e-5
+
+# Scheduler parameters
+factor: 0.1
+patience: 10
+min_lr: 1e-6

@@ -3,8 +3,8 @@
 tensorboard:
   _target_: lightning.pytorch.loggers.tensorboard.TensorBoardLogger
   save_dir: "${paths.output_dir}/tensorboard/"
-  name: null
-  log_graph: False
-  default_hp_metric: True
+  name: "bs-${data.batch_size}_depths-${model.depths}_dims-${model.dims}_head_fn-${model.head_fn}_conv_ratio-${model.conv_ratio}"
+  log_graph: True
+  default_hp_metric: False
   prefix: ""
   # version: ""

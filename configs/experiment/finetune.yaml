@@ -1,0 +1,33 @@
+# @package _global_
+
+defaults:
+  - override /data: dogs
+  - override /model: mamba
+  - override /callbacks: default
+  - override /logger: default
+  - override /trainer: default
+
+seed: 42
+
+data:
+  batch_size: 32
+  num_workers: 12
+  pin_memory: True
+
+
+trainer:
+  min_epochs: 1
+  max_epochs: 20
+  # log_every_n_steps: 1
+
+callbacks:
+  model_checkpoint:
+    monitor: "val/acc"
+    mode: "max"
+    save_top_k: 1
+    save_last: false
+
+
+tags:
+  - finetune
+  - mambaout

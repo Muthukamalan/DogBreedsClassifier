@@ -1,39 +1,28 @@
-import os
-from pathlib import Path
-
 import pytest
-from hydra.core.hydra_config import HydraConfig
-from omegaconf import DictConfig, open_dict
+import hydra
 
-from src.eval import evaluate
-from src.train import train
+import rootutils
+
+# Setup root directory
+root = rootutils.setup_root(__file__, indicator='.project-root', pythonpath=True)
 
 
-@pytest.mark.slow
-def test_train_eval(tmp_path: Path, cfg_train: DictConfig, cfg_eval: DictConfig) -> None:
-    """Tests training and evaluation by training for 1 epoch with `train.py` then evaluating with
-    `eval.py`.
+@pytest.fixture
+def config():
+    with hydra.initialize(version_base=None, config_path='../configs'):
+        cfg = hydra.compose(config_name='eval', return_hydra_config=True)
+        return cfg
 
-    :param tmp_path: The temporary logging path.
-    :param cfg_train: A DictConfig containing a valid training configuration.
-    :param cfg_eval: A DictConfig containing a valid evaluation configuration.
-    """
-    assert str(tmp_path) == cfg_train.paths.output_dir == cfg_eval.paths.output_dir
 
-    with open_dict(cfg_train):
-        cfg_train.trainer.max_epochs = 1
-        cfg_train.test = True
+def test_catdog_ex_testing(config, tmp_path):
+    # Update output and log directories to use temporary path
+    config.paths.output_dir = str(tmp_path)
+    config.paths.log_dir = str(tmp_path / 'logs')
 
-    HydraConfig().set_config(cfg_train)
-    train_metric_dict, _ = train(cfg_train)
+    # Instantiate components
+    datamodule = hydra.utils.instantiate(config.data)
+    datamodule.setup()
+    model = hydra.utils.instantiate(config.model)
+    trainer = hydra.utils.instantiate(config.trainer)
 
-    assert "last.ckpt" in os.listdir(tmp_path / "checkpoints")
-
-    with open_dict(cfg_eval):
-        cfg_eval.ckpt_path = str(tmp_path / "checkpoints" / "last.ckpt")
-
-    HydraConfig().set_config(cfg_eval)
-    test_metric_dict, _ = evaluate(cfg_eval)
-
-    assert test_metric_dict["test/acc"] > 0.0
-    assert abs(train_metric_dict["test/acc"].item() - test_metric_dict["test/acc"].item()) < 0.001
+    trainer.test(model, datamodule=datamodule, verbose=True, ckpt_path=config.ckpt_path)

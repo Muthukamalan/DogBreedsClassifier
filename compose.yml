@@ -1,0 +1,44 @@
+services:
+  train:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./logs:/code/logs
+      - ./outputs:/code/outputs 
+      - ./data:/code/data 
+    environment:
+      - PYTHONPATH=/code 
+      - PYTHONBUFFERED=1 
+      - HYDRA_FULL_ERROR=1 
+    command: make fastrun
+
+  eval:
+    build: 
+      context: .
+      dockerfile: Dockerfile 
+    volumes:
+      - ./logs:/code/logs
+      - ./data:/code/data 
+    environment:
+      - PYTHONPATH=/code 
+      - PYTHONBUFFERED=1 
+      - HYDRA_FULL_ERROR=1 
+    command: make eval
+    
+  inference:
+    build: 
+      context: .
+      dockerfile: Dockerfile 
+    volumes:
+      #- .:/code # moun the entire project
+      - ./logs:/code/logs
+      - ./outputs:/code/outputs
+      - ./data:/code/data 
+    command: make inference
+  
+
+  testing:
+    build: 
+      context: . 
+      dockerfile: Dockerfile
