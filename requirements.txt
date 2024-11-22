@@ -26,8 +26,6 @@ rich            # beautiful text formatting in terminal
 # pytest          # tests
 # sh            # for running bash commands in some tests (linux/macos only)
 
-# --------- deployment --------- #
-gradio==3.3.1
 
 # ---------- pytest ------------- #
 pytest==8.3.3 
@@ -50,6 +48,8 @@ dvc-render==1.0.2
 dvc-s3==3.2.0
 dvc-studio-client==0.21.0
 dvc-task==0.40.1
+
+# --------- deployment --------- #
 gradio==4.44.1
 gradio_client==1.3.0
 
