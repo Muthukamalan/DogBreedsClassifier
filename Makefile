@@ -13,8 +13,9 @@ fastrun: ## train simple mode to check
 test:  ## pytest and code-cov
 	pytest --cov --cov-report=xml
 	# coverage run -m pytest
+	# pytest --cov=tests/
 	# setup code-coverage
-	# coverage xml -o coverage.xml
+	coverage xml -o coverage.xml
 
 
 train: ## hparams search and push optimal-result to s3
