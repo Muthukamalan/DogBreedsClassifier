@@ -68,8 +68,8 @@ class DogsBreadDataModule(pl.LightningDataModule):
             print(
                 f"loaded config:: {load_dotenv(dotenv_path=os.path.join(os.getcwd(), '.env'))}"
             )
-            os.environ['KAGGLE_USERNAME'] = os.environ['username']
-            os.environ['KAGGLE_KEY'] = os.environ['key']
+            os.environ["KAGGLE_USERNAME"] = os.environ["username"]
+            os.environ["KAGGLE_KEY"] = os.environ["key"]
 
             # after loading kaggle key then imported
             import kaggle
@@ -79,16 +79,16 @@ class DogsBreadDataModule(pl.LightningDataModule):
             kaggle.api.authenticate()
             dogs_dataset = self.hparams.data_dir
             kaggle.api.dataset_download_files(
-                'khushikhushikhushi/dog-breed-image-dataset',
+                "khushikhushikhushi/dog-breed-image-dataset",
                 path=dogs_dataset,
                 unzip=True,
             )
 
-            base_dir = os.path.join(dogs_dataset, 'dataset')
+            base_dir = os.path.join(dogs_dataset, "dataset")
 
-            train_dir = os.path.join(dogs_dataset, 'train')
-            val_dir = os.path.join(dogs_dataset, 'validation')
-            test_dir = os.path.join(dogs_dataset, 'test')
+            train_dir = os.path.join(dogs_dataset, "train")
+            val_dir = os.path.join(dogs_dataset, "validation")
+            test_dir = os.path.join(dogs_dataset, "test")
             breed_folders = [
                 f
                 for f in os.listdir(base_dir)
@@ -146,28 +146,28 @@ class DogsBreadDataModule(pl.LightningDataModule):
                     )
 
                 if (
-                    breed_path.endswith('test')
-                    or breed_path.endswith('train')
-                    or breed_path.endswith('validation')
+                    breed_path.endswith("test")
+                    or breed_path.endswith("train")
+                    or breed_path.endswith("validation")
                 ):
                     pass
                 else:
                     shutil.rmtree(breed_path)
             shutil.rmtree(base_dir)
-            print('Dataset Downloadded and Extracted Successfully!')
+            print("Dataset Downloadded and Extracted Successfully!")
 
     def setup(self, stage: Optional[str] = None) -> None:
-        if stage == 'fit' or stage is None:
+        if stage == "fit" or stage is None:
             self.train_dataset = ImageFolder(
-                root=os.path.join(str(self.hparams.data_dir), 'train'),
+                root=os.path.join(str(self.hparams.data_dir), "train"),
                 transform=self.transforms,
             )
             self.test_dataset = ImageFolder(
-                root=os.path.join(str(self.hparams.data_dir), 'test'),
+                root=os.path.join(str(self.hparams.data_dir), "test"),
                 transform=self.transforms,
             )
             self.validation_dataset = ImageFolder(
-                root=os.path.join(str(self.hparams.data_dir), 'validation'),
+                root=os.path.join(str(self.hparams.data_dir), "validation"),
                 transform=self.transforms,
             )
 

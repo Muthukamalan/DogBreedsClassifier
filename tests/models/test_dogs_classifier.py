@@ -2,7 +2,7 @@ import torch
 import rootutils
 
 # Setup root directory
-root = rootutils.setup_root(__file__, indicator='.project-root', pythonpath=True)
+root = rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 
 
 from src.models.dogs_classifier import DogsBreedClassifier
@@ -10,10 +10,10 @@ from src.models.dogs_classifier import DogsBreedClassifier
 
 def test_dogsbread_classifier_forward():
     model = DogsBreedClassifier(
-        model_name='MambaOut',
+        model_name="MambaOut",
         dims=(6, 12, 24, 36),
         depths=(3, 3, 15, 3),
-        head_fn='default',
+        head_fn="default",
         conv_ratio=1.2,
         num_classes=10,
         pretrained=False,

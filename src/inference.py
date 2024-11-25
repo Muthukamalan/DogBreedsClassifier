@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from torchvision import transforms
 
-torch.set_float32_matmul_precision('high')
+torch.set_float32_matmul_precision("high")
 
 
 from models.dogs_classifier import DogsBreedClassifier
@@ -16,7 +16,7 @@ from utils.logging_utils import setup_logger, task_wrapper, get_rich_progress
 
 @task_wrapper
 def load_image(image_path):
-    img = Image.open(image_path).convert('RGB')
+    img = Image.open(image_path).convert("RGB")
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -54,10 +54,10 @@ def infer(model, image_tensor):
 def save_prediction_image(image, predicted_label, confidence, output_path):
     plt.figure(figsize=(10, 6))
     plt.imshow(image)
-    plt.axis('off')
-    plt.title(f'Predicted: {predicted_label} (Confidence: {confidence:.2f})')
+    plt.axis("off")
+    plt.title(f"Predicted: {predicted_label} (Confidence: {confidence:.2f})")
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close()
 
 
@@ -70,47 +70,47 @@ def main(args):
     output_folder = Path(args.output_folder)
     output_folder.mkdir(exist_ok=True, parents=True)
 
-    image_files = list(input_folder.glob('*'))
+    image_files = list(input_folder.glob("*"))
     with get_rich_progress() as progress:
-        task = progress.add_task('[green]Processing images...', total=len(image_files))
+        task = progress.add_task("[green]Processing images...", total=len(image_files))
 
         for image_file in image_files:
-            if image_file.suffix.lower() in ['.jpg', '.jpeg', '.png']:
+            if image_file.suffix.lower() in [".jpg", ".jpeg", ".png"]:
                 img, img_tensor = load_image(image_file)
                 predicted_label, confidence = infer(model, img_tensor.to(model.device))
 
-                output_file = output_folder / f'{image_file.stem}_prediction.png'
+                output_file = output_folder / f"{image_file.stem}_prediction.png"
 
                 save_prediction_image(img, predicted_label, confidence, output_file)
 
                 progress.console.print(
-                    f'Processed {image_file.name}: {predicted_label} ({confidence:.2f})'
+                    f"Processed {image_file.name}: {predicted_label} ({confidence:.2f})"
                 )
                 progress.advance(task)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description='Infer using trained CatDog Classifier'
+        description="Infer using trained CatDog Classifier"
     )
     parser.add_argument(
-        '--input_folder',
+        "--input_folder",
         type=str,
         required=True,
-        help='Path to input folder containing images',
+        help="Path to input folder containing images",
     )
     parser.add_argument(
-        '--output_folder',
+        "--output_folder",
         type=str,
         required=True,
-        help='Path to output folder for predictions',
+        help="Path to output folder for predictions",
     )
     parser.add_argument(
-        '--ckpt_path', type=str, required=True, help='Path to model checkpoint'
+        "--ckpt_path", type=str, required=True, help="Path to model checkpoint"
     )
     args = parser.parse_args()
 
-    log_dir = Path(__file__).resolve().parent.parent / 'logs'
-    setup_logger(log_dir / 'infer_log.log')
+    log_dir = Path(__file__).resolve().parent.parent / "logs"
+    setup_logger(log_dir / "infer_log.log")
 
     main(args)

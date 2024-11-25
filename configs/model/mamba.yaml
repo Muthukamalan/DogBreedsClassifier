@@ -1,16 +1,17 @@
 _target_: src.models.dogs_classifier.DogsBreedClassifier
 
 
+dims: 
+  - 3
+  - 6
+  - 12
+  - 18
+  
 depths: 
   - 1
   - 1
   - 1
   - 1
-dims:
-  - 3
-  - 6
-  - 12
-  - 18
 head_fn: 'default'
 conv_ratio: 1.
 in_chans: 3

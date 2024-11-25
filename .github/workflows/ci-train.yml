@@ -44,7 +44,7 @@ jobs:
           pip install -r requirements.txt
           make pull
           make showoff
-          make train
+          make hparams
           
 
       # # removing dataset & old confusion-matrcies 🌀😶‍🌫️

@@ -10,8 +10,10 @@ multirun/
 .pytest_cache/
 *.ckpt
 !samples/checkpoints/epoch_019.ckpt
+*.pt
 *.bkp
 .ruff_cache/
+*.mar
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

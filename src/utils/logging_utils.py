@@ -13,22 +13,22 @@ def setup_logger(log_file):
     logger.remove()
     logger.add(
         sys.stderr,
-        format='<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>',
+        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
     )
-    logger.add(log_file, rotation='10 MB')
+    logger.add(log_file, rotation="10 MB")
 
 
 def task_wrapper(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         func_name = func.__name__
-        logger.info(f'Starting {func_name}')
+        logger.info(f"Starting {func_name}")
         try:
             result = func(*args, **kwargs)
-            logger.info(f'Finished {func_name}')
+            logger.info(f"Finished {func_name}")
             return result
         except Exception as e:
-            logger.exception(f'Error in {func_name}: {str(e)}')
+            logger.exception(f"Error in {func_name}: {str(e)}")
             raise
 
     return wrapper
@@ -37,13 +37,13 @@ def task_wrapper(func):
 def get_rich_progress():
     return Progress(
         SpinnerColumn(),
-        TextColumn('[progress.description]{task.description}'),
+        TextColumn("[progress.description]{task.description}"),
         transient=True,
     )
 
 
 def plot_confusion_matrix(
-    model: pl.LightningModule, datamodule: pl.LightningDataModule, path: str = '.'
+    model: pl.LightningModule, datamodule: pl.LightningDataModule, path: str = "."
 ):
     model.eval()
     os.makedirs(path, exist_ok=True)
@@ -68,12 +68,12 @@ def plot_confusion_matrix(
         disp = ConfusionMatrixDisplay(
             confusion_matrix=cm, display_labels=loader().dataset.classes
         )
-        disp.plot(xticks_rotation='vertical', colorbar=False).figure_.savefig(
-            os.path.join(path, f'{mode}_confusion_matrix.png')
+        disp.plot(xticks_rotation="vertical", colorbar=False).figure_.savefig(
+            os.path.join(path, f"{mode}_confusion_matrix.png")
         )  # f'{path}{mode}_confusion_matrix.png')
 
     for mode, loader in zip(
-        ['train', 'test', 'val'],
+        ["train", "test", "val"],
         [
             datamodule.train_dataloader,
             datamodule.test_dataloader,

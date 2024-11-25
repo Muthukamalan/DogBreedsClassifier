@@ -10,14 +10,13 @@ defaults:
   - logger: default # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
   - trainer: default
   - paths: default
-    # - hydra: null #default
+  # - hydra: default
 
   # experiment configs allow for version control of specific hyperparameters
   # e.g. best hyperparameters for given model and datamodule
-  - experiment: finetune.yaml
+  - experiment: pretrain.yaml
   # debugging config (enable through command line, e.g. `python train.py debug=default)
   - debug: null
-
 
   - override hydra/sweeper: optuna
   - override hydra/sweeper/sampler: tpe
@@ -46,27 +45,4 @@ ckpt_path: null
 # seed for random number generators in pytorch, numpy and python.random
 seed: 42
 
-
-hydra:
-  mode: "MULTIRUN" 
-  launcher:
-    # don't go above [RunTimeError:: Please call `iter(combined_loader)` first.]
-    # `NOT ABLE to UNDERSTAND :(`:: https://github.com/Lightning-AI/pytorch-lightning/issues/19373 
-    # No activity:: https://github.com/openvinotoolkit/anomalib/issues/2078
-    n_jobs: 1   
-  sweeper:
-    sampler:
-      _target_: optuna.samplers.TPESampler
-      seed: 32
-      n_startup_trials: 3 # number of random sampling runs before optimization starts
-    direction: minimize   # we use test_metrics['test/loss_epoch']
-    study_name: optimal_searching
-    n_trials: 30  #108 totoal
-    n_jobs: 16    # 16-thread
-    params:
-      # https://github.com/facebookresearch/hydra/discussions/2906
-      model.dims: choice([6,12,24,36],[12,24,48,72])  # "[6,12,24,36],[12,24,48,72]"       # [3,6,12,18], [6,12,24,36] 
-      model.depths: "[3,3,15,3],[3,4,27,3], [3,3,9,3]"     
-      model.head_fn: choice('norm_mlp','default')
-      model.conv_ratio: choice(1,1.2,1.5)                   #choice(1,1.2,1.5)
-      data.batch_size: choice(16,32,64)
+script: true

@@ -2,7 +2,7 @@ import pytest
 import rootutils
 
 # Setup root directory
-root = rootutils.setup_root(__file__, indicator='.project-root', pythonpath=True)
+root = rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 
 
 from src.datamodules.dogs_datamodule import DogsBreadDataModule
@@ -16,7 +16,7 @@ def datamodule():
     print(os.getcwd())
 
     dm = DogsBreadDataModule(
-        batch_size=8, num_workers=0, pin_memory=False, data_dir='./data/dogs_dataset'
+        batch_size=8, num_workers=0, pin_memory=False, data_dir="./data/dogs_dataset"
     )
     # print(dm)
     return dm
@@ -52,5 +52,5 @@ def test_dogsbread_dataloaders(datamodule):
     assert test_loader is not None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     datamodule()

@@ -6,8 +6,10 @@ help:  ## Show help
 pull: ## pulling data from s3
 	dvc pull 
 
-fastrun: ## train simple mode to check
-	HYDRA_FULL_ERROR=1 python src/train.py trainer.max_epochs=3 trainer.precision=16
+train: ## train mode to check
+	HYDRA_FULL_ERROR=1 python src/train.py 
+	echo "pushing scripted model to s3"
+	aws s3 mv samples/checkpoints/mambaout.pt s3://mhema-dog-breeds-bucket/models/
 
 
 test:  ## pytest and code-cov
@@ -18,12 +20,12 @@ test:  ## pytest and code-cov
 	coverage xml -o coverage.xml
 
 
-train: ## hparams search and push optimal-result to s3
-	HYDRA_FULL_ERROR=1 python src/train.py -m
+hparams: ## hparams search and push optimal-result to s3
+	HYDRA_FULL_ERROR=1 python src/train.py experiment=hparams
 	echo "Best Hparams"
 	cat multirun/*/*/optimization_results.yaml
 	echo "pushing to S3"
-	aws s3 cp multirun/ s3://mhema-dog-breeds-bucket/training-$$(date +"%m-%d-%H%M%S")/ --recursive
+	# aws s3 cp multirun/ s3://mhema-dog-breeds-bucket/training-$$(date +"%m-%d-%H%M%S")/ --recursive
 
 
 
@@ -37,8 +39,9 @@ inference:
 
 
 trash: ## clean data/dataset and logs
-	rm -rf data/dogs_dataset
-	find . -type d \( -name '__pycache__' -o -name 'logs' -o -name 'outputs' -o -name 'multirun' \) -exec rm -rf {} +
+	# rm -rf data/dogs_dataset
+	rm model_store/mamba_out.mar 
+	find . -type d \( -name '__pycache__' -o -name 'logs' -o -name 'outputs' -o -name '.ruff_cache' -o -name 'multirun' \) -exec rm -rf {} +
 	rm -rf samples/outputs/*
 	rm assets/test_confusion_matrix.png assets/train_confusion_matrix.png assets/val_confusion_matrix.png
 	

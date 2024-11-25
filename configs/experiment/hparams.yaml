@@ -1,0 +1,60 @@
+# @package _global_
+
+defaults:
+  - override /data: dogs
+  - override /model: mamba
+  - override /callbacks: default
+  - override /logger: default
+  - override /trainer: default
+
+seed: 42
+
+data:
+  batch_size: 32
+  num_workers: 12
+  pin_memory: True
+
+
+trainer:
+  min_epochs: 1
+  max_epochs: 5
+  # log_every_n_steps: 1
+
+callbacks:
+  model_checkpoint:
+    monitor: "val/acc"
+    mode: "max"
+    save_top_k: 1
+    save_last: false
+
+
+task_name: "hparams"  #used in hydra-config to write logs
+script: false
+
+tags:
+  - hparams
+  - mambaout
+
+hydra:
+  mode: "MULTIRUN" 
+  launcher:
+    # don't go above [RunTimeError:: Please call `iter(combined_loader)` first.]
+    # `NOT ABLE to UNDERSTAND :(`:: https://github.com/Lightning-AI/pytorch-lightning/issues/19373 
+    # No activity:: https://github.com/openvinotoolkit/anomalib/issues/2078
+    n_jobs: 1   
+  sweeper:
+    sampler:
+      _target_: optuna.samplers.TPESampler
+      seed: 32
+      n_startup_trials: 3 # number of random sampling runs before optimization starts
+    direction: minimize   # we use test_metrics['test/loss_epoch']
+    study_name: optimal_searching
+    n_trials: 2  #108 totoal
+    n_jobs: 16    # 16-thread
+    params:
+      # https://github.com/facebookresearch/hydra/discussions/2906
+      model.dims: choice([6,12,24,36],[12,24,48,72])  # "[6,12,24,36],[12,24,48,72]"       # [3,6,12,18], [6,12,24,36] 
+      model.depths: "[3,3,15,3],[3,4,27,3], [3,3,9,3]"     
+      model.head_fn: choice('norm_mlp','default')
+      model.conv_ratio: choice(1,1.2,1.5)                   #choice(1,1.2,1.5)
+      data.batch_size: choice(16,32,64)

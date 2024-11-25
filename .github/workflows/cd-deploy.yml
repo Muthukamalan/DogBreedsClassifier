@@ -1,9 +1,11 @@
-name: GRADIO DEPLOY
+name: GradiDeploy
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+
 
 jobs:
   build:

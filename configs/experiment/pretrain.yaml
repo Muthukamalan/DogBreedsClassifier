@@ -29,5 +29,24 @@ callbacks:
 
 
 tags:
-  - finetune
+  - pretrain
   - mambaout
+
+
+model:
+  depths: 
+    - 3
+    - 4
+    - 27
+    - 3
+  dims:
+    - 6
+    - 12
+    - 24
+    - 36
+  head_fn: 'default'
+  conv_ratio: 1.2
+
+
+
+script: true

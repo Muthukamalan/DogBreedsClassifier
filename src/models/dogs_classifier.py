@@ -43,13 +43,13 @@ class DogsBreedClassifier(pl.LightningModule):
         #     p.requires_grad=self.hparams.trainable
 
         self.train_acc: Accuracy = Accuracy(
-            task='multiclass', num_classes=self.hparams.num_classes
+            task="multiclass", num_classes=self.hparams.num_classes
         )
         self.test_acc: Accuracy = Accuracy(
-            task='multiclass', num_classes=self.hparams.num_classes
+            task="multiclass", num_classes=self.hparams.num_classes
         )
         self.valid_acc: Accuracy = Accuracy(
-            task='multiclass', num_classes=self.hparams.num_classes
+            task="multiclass", num_classes=self.hparams.num_classes
         )
 
     def forward(self, x: torch.Tensor):
@@ -61,9 +61,9 @@ class DogsBreedClassifier(pl.LightningModule):
         loss = F.cross_entropy(logits, y)
         preds = F.softmax(logits, dim=-1)
         self.train_acc(preds, y)
-        self.log('train/loss', loss, prog_bar=True, on_epoch=True, on_step=True)
+        self.log("train/loss", loss, prog_bar=True, on_epoch=True, on_step=True)
         self.log(
-            'train/acc', self.train_acc, prog_bar=True, on_epoch=True, on_step=True
+            "train/acc", self.train_acc, prog_bar=True, on_epoch=True, on_step=True
         )
         return loss
 
@@ -73,8 +73,8 @@ class DogsBreedClassifier(pl.LightningModule):
         loss = F.cross_entropy(logits, y)
         preds = F.softmax(logits, dim=-1)
         self.valid_acc(preds, y)
-        self.log('val/loss', loss, prog_bar=True, on_epoch=True, on_step=True)
-        self.log('val/acc', self.valid_acc, prog_bar=True, on_epoch=True, on_step=True)
+        self.log("val/loss", loss, prog_bar=True, on_epoch=True, on_step=True)
+        self.log("val/acc", self.valid_acc, prog_bar=True, on_epoch=True, on_step=True)
         return loss
 
     def test_step(self, batch, batch_idx) -> torch.Tensor:
@@ -83,8 +83,8 @@ class DogsBreedClassifier(pl.LightningModule):
         loss = F.cross_entropy(logits, y)
         preds = F.softmax(logits, dim=-1)
         self.test_acc(preds, y)
-        self.log('test/loss', loss, prog_bar=True, on_epoch=True, on_step=True)
-        self.log('test/acc', self.test_acc, prog_bar=True, on_epoch=True, on_step=True)
+        self.log("test/loss", loss, prog_bar=True, on_epoch=True, on_step=True)
+        self.log("test/acc", self.test_acc, prog_bar=True, on_epoch=True, on_step=True)
 
         return loss
 
@@ -105,10 +105,10 @@ class DogsBreedClassifier(pl.LightningModule):
             total_steps=self.trainer.estimated_stepping_batches,
             max_lr=self.hparams.lr * 10,
             three_phase=True,
-            final_div_factor=10000,
+            final_div_factor=1000,
         )
         return {
-            'optimizer': optimizer,
-            'lr_scheduler': scheduler,
+            "optimizer": optimizer,
+            "lr_scheduler": scheduler,
             # "monitor":"train/loss_epoch"
         }

@@ -12,3 +12,5 @@ stages:
     cmd: make inference
   test:
     cmd: make test
+  hparams:
+    cmd: make hparams
