@@ -9,7 +9,7 @@ pull: ## pulling data from s3
 train: ## train mode to check
 	HYDRA_FULL_ERROR=1 python src/train.py 
 	echo "pushing scripted model to s3"
-	aws s3 mv samples/checkpoints/mambaout.pt s3://mhema-dog-breeds-bucket/models/
+	# aws s3 mv samples/checkpoints/mambaout.pt s3://mhema-dog-breeds-bucket/models/
 
 
 test:  ## pytest and code-cov
@@ -81,3 +81,8 @@ format: ## Run pre-commit hooks
 sync: ## Merge changes from main branch to your current branch
 	git pull
 	git pull origin main
+
+
+
+deploy: ## deploy app to huggingface
+	cd gradio/ && gradio deploy

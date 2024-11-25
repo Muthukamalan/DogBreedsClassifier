@@ -1,7 +1,7 @@
 #!/bin/bash
 # Schedule execution of many runs
 # Run from root folder with: bash scripts/schedule.sh
-
-python src/train.py trainer.max_epochs=5 logger=csv
-
-python src/train.py trainer.max_epochs=10 logger=csv
+dvc pull
+python src/train.py experiment=hparams logger=csv
+python src/eval.py
+python src/inference.py --input_folder samples/inputs/ --output_folder samples/outputs/ --ckpt_path samples/checkpoints/epoch_019.ckpt 
