@@ -51,8 +51,8 @@ jobs:
 
 
       # removing dataset & old confusion-matrcies 🌀😶‍🌫️
-      - name: cleaning existing files 🪥
-        run: make trash
+      # - name: cleaning existing files 🪥
+      #   run: make trash
       
       # download dataset
       - name: download dataset from s3
