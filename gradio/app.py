@@ -81,4 +81,4 @@ gr.Interface(
     cache_examples=True,
     flagging_options=[],
     flagging_callback=SimpleCSVLogger()
-).launch(share=False, debug=False,server_name="0.0.0.0",server_port=8080,enable_monitoring=None)
+).launch(share=False, debug=False) # ,server_name="0.0.0.0",server_port=8080,enable_monitoring=None
