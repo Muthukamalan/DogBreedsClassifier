@@ -13,7 +13,7 @@ torch.set_float32_matmul_precision("medium")
 # device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 device = torch.device("cpu") 
 torch.set_default_device(device=device)
-torch.autocast(enabled=True, dtype="float16", device_type="cuda")
+# torch.autocast(enabled=True, dtype="float16", device_type="cuda")
 
 pl.seed_everything(123, workers=True)
 
