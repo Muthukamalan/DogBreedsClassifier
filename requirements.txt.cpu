@@ -49,4 +49,4 @@ dvc-studio-client==0.21.0
 dvc-task==0.40.1
 
 # --------- deployment --------- #
-gradio==3.3.1
+gradio==3.45.0
