@@ -1,18 +1,25 @@
-FROM public.ecr.aws/docker/library/python:3.11.10-slim
+FROM python:3.9-slim-buster AS build
+ 
+RUN apt-get update -y && apt install -y --no-install-recommends git build-essential\
+    && pip install --no-cache-dir -U pip
 
-# Install AWS Lambda Web Adapter
-COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.8.4 /lambda-adapter /opt/extensions/lambda-adapter
+COPY requirements.txt .
+# Create the virtual environment.
+RUN python3 -m venv /venv
+ENV PATH=/venv/bin:$PATH
 
-WORKDIR /var/task
-
-# Copy and install requirements
-COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-# Copy application code and model
-COPY app.py ./
-COPY best_model.pt ./
-COPY examples/ ./examples/
+# Stage 2: Runtime
+FROM python:3.9-slim-buster 
+RUN apt-get update -y && apt install -y --no-install-recommends build-essential
+COPY --from=build /venv /venv
+ENV PATH=/venv/bin:$PATH
 
-# Set command
-CMD ["python3", "app.py"] 
+WORKDIR /code
+
+COPY . .
+
+EXPOSE 7860
+
+CMD [ "python","app.py" ]
