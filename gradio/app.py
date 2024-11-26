@@ -1,7 +1,5 @@
 import os
-from numpy.lib.type_check import imag
 import torch
-import lightning as pl
 import gradio as gr
 from PIL import Image
 from torchvision import transforms
@@ -15,7 +13,6 @@ device = torch.device("cpu")
 torch.set_default_device(device=device)
 # torch.autocast(enabled=True, dtype="float16", device_type="cuda")
 
-pl.seed_everything(123, workers=True)
 
 TEST_TRANSFORMS = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -23,16 +20,16 @@ TEST_TRANSFORMS = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 class_labels = [
-    'Beagle',
-    'Boxer',
-    'Bulldog',
-    'Dachshund',
-    'German_Shepherd',
-    'Golden_Retriever',
-    'Labrador_Retriever',
-    'Poodle',
-    'Rottweiler',
-    'Yorkshire_Terrier',
+    "Beagle",
+    "Boxer",
+    "Bulldog",
+    "Dachshund",
+    "German_Shepherd",
+    "Golden_Retriever",
+    "Labrador_Retriever",
+    "Poodle",
+    "Rottweiler",
+    "Yorkshire_Terrier",
 ]
 
 
@@ -81,4 +78,4 @@ gr.Interface(
     cache_examples=True,
     flagging_options=[],
     flagging_callback=SimpleCSVLogger()
-).launch(share=False, debug=False) # ,server_name="0.0.0.0",server_port=8080,enable_monitoring=None
+).launch(share=False, debug=False,server_name="0.0.0.0",server_port=7860,enable_monitoring=None)

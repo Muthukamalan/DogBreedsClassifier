@@ -10,3 +10,10 @@ pinned:  true
 
 
 # DogBreedsClassifier
+
+
+```bash
+docker build -t dogsbreedsgradio:latest . 
+docker run --rm -it -p 7860:7860 dogsbreedsgradio:latest
+```
+

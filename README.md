@@ -1,15 +1,15 @@
 
 <div align="center">
-# Lightning-Hydra-Template
+# DogBreedsClassifier
 
 [![python](https://img.shields.io/badge/-Python_3.8_%7C_3.9_%7C_3.10-blue?logo=python&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![pytorch](https://img.shields.io/badge/PyTorch_2.0+-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/get-started/locally/)
 [![lightning](https://img.shields.io/badge/-Lightning_2.0+-792ee5?logo=pytorchlightning&logoColor=white)](https://pytorchlightning.ai/)
 [![hydra](https://img.shields.io/badge/Config-Hydra_1.3-89b8cd)](https://hydra.cc/)
 [![black](https://img.shields.io/badge/Code%20Style-Black-black.svg?labelColor=gray)](https://black.readthedocs.io/en/stable/)
-[![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/) <br>
-[![codecov](https://codecov.io/gh/ashleve/lightning-hydra-template/branch/main/graph/badge.svg)](https://codecov.io/gh/ashleve/lightning-hydra-template) 
+[![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/) 
 ![Huggingface](https://img.shields.io/badge/-HuggingFace-FDEE21?style=for-the-badge&logo=HuggingFace&logoColor=black)  <br>
+[![codecov](https://codecov.io/gh/ashleve/lightning-hydra-template/branch/main/graph/badge.svg)](https://codecov.io/gh/ashleve/lightning-hydra-template)  <br>
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![DVC](https://img.shields.io/badge/DVC-945DD6?style=for-the-badge&logo=dvc&logoColor=white)
 ![Amazon S3](https://img.shields.io/badge/Amazon%20S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white)
@@ -32,14 +32,24 @@
 
 [Tensorboard](https://www.tensorflow.org/tensorboard) - TensorBoard is a tool that provides visualization and debugging capabilities for TensorFlow and PyTorch experiments. It’s a popular choice for monitoring machine learning training processes in real time.
 
-[AWS|EC2](https://aws.amazon.com/ec2/) - AWS Elastic Compute Cloud (EC2) is a service that provides scalable virtual computing resources in the cloud.
+[AWS|EC2|S3|Lambda|ECR](https://aws.amazon.com/ec2/) - AWS Elastic Compute Cloud (EC2) is a service that provides scalable virtual computing resources in the cloud.
 
 [Docker](https://www.docker.com/) - A platform for creating, deploying, and managing lightweight, portable, and scalable containers.
 
 [Gradio](https://www.gradio.app/) - A Python library for building simple, interactive web interfaces for machine learning models and APIs.
 
 
+
+## WORKFLows
+[![TrainPipeline](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/ci-train.yml/badge.svg)](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/ci-train.yml)
+[![EvalPipeline](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/ci-eval.yml/badge.svg)](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/ci-eval.yml)
+[![InferPipeline](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/ci-infer.yml/badge.svg)](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/ci-infer.yml)
+[![PYTestPipeline](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/cd-codecov.yml/badge.svg)](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/cd-codecov.yml)
+[![GradiDeploy](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/cd-deploy.yml/badge.svg)](https://github.com/Muthukamalan/DogBreedsClassifier/actions/workflows/cd-deploy.yml)
+
 </div>
+
+
 
 ## Project Structure
 ```bash
@@ -238,12 +248,6 @@ Default logging structure:
 
 
 
-## WORKFLows
-- [![TrainPipeline]()]()
-- [![TestPipeline]()]()
-- [![InferPipeline]()]()
-- [![PytestPipeline]()]()
-- [![Deployipeline]()]()
 
 ## Data Setup
 ```.env
