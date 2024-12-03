@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dog Breed Classifier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .upload-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #imagePreview {
+            max-width: 300px;
+            margin: 20px auto;
+            display: none;
+            border-radius: 8px;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dog Breed Classifier</h1>
+
+        <div class="upload-section">
+            <input type="file" id="imageInput" accept="image/*">
+            <button onclick="predictBreed()">Predict Breed</button>
+        </div>
+
+        <img id="imagePreview">
+
+        <div id="result" class="result-section"></div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const resultDiv = document.getElementById('result');
+
+        imageInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function predictBreed() {
+            const formData = new FormData();
+            const file = imageInput.files[0];
+
+            if (!file) {
+                alert('Please select an image first');
+                return;
+            }
+
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/dogs', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <h3>Results:</h3>
+                    <p>Breed: ${data.label.replace(/_/g, ' ')}</p>
+                    <p>Confidence: ${(data.confidence * 100).toFixed(2)}%</p>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = 'Error processing image';
+            }
+        }
+    </script>
+</body>
+</html>

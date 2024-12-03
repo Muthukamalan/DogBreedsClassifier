@@ -11,3 +11,5 @@ stages:
     cmd: make eval
   inference:
     cmd: make inference
+  deploy:
+    cmd: make deploy

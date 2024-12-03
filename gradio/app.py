@@ -34,7 +34,7 @@ class_labels = [
 
 
 # Model
-model:torch.nn.Module = torch.jit.load("best_model.pt", map_location=device).to(device)
+model:torch.nn.Module = torch.jit.load("mambaout.pt", map_location=device).to(device)
 
 
 @torch.no_grad()
