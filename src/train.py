@@ -151,7 +151,20 @@ def main(cfg: DictConfig):
             os.remove(model_file_path)
         torch.jit.save(scripted_model, model_file_path)
         print(f"torch script model saved: {model_file_path=}")
-        
+
+        onnx_model_file_path:str = os.path.join( f"{cfg.paths.root_dir}","samples","checkpoints", "mambaout.onnx" )
+        model.to_onnx(file_path=onnx_model_file_path,input_sample=imgs, export_params=True,verbose=True, dynamic_axes={'input': {0: 'batch'}},input_names=['input'],output_names=['output'])
+        print(f"onnx model saved: {onnx_model_file_path}")
+
+        #######################################################################################################################
+        # Once you have the exported model, you can run it on your ONNX runtime in the following way:
+
+        # import onnxruntime
+        # ort_session = onnxruntime.InferenceSession(filepath)
+        # input_name = ort_session.get_inputs()[0].name
+        # ort_inputs = {input_name: np.random.randn(1, 64)}
+        # ort_outs = ort_session.run(None, ort_inputs)
+        #######################################################################################################################        
         
     return test_metrics[0][
         "test/loss_epoch"

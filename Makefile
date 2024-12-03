@@ -40,10 +40,10 @@ inference:
 
 trash: ## clean data/dataset and logs
 	# rm -rf data/dogs_dataset
-	rm model_store/mamba_out.mar 
 	find . -type d \( -name '__pycache__' -o -name 'logs' -o -name 'outputs' -o -name '.ruff_cache' -o -name 'multirun' \) -exec rm -rf {} +
 	rm -rf samples/outputs/*
 	rm assets/test_confusion_matrix.png assets/train_confusion_matrix.png assets/val_confusion_matrix.png
+	#rm model_store/mamba_out.mar 
 	
 	
 
