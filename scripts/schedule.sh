@@ -1,4 +1,7 @@
 #!/bin/bash
+#:Project        : DogBreedsClassifier
+#:Version        : 0.1.0
+#:Description    : ImageClassification-Model Helper
 # Schedule execution of many runs
 # Run from root folder with: bash scripts/schedule.sh
 dvc pull
