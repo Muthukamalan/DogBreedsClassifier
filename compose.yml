@@ -1,8 +1,8 @@
 services:
-  train:
+  hparams:
     build: 
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.cpu
     volumes:
       - ./logs:/code/logs
       - ./outputs:/code/outputs 
@@ -11,7 +11,21 @@ services:
       - PYTHONPATH=/code 
       - PYTHONBUFFERED=1 
       - HYDRA_FULL_ERROR=1 
-    command: make fastrun
+    command: make hparams
+
+  train:
+    build: 
+      context: .
+      dockerfile: Dockerfile.cpu
+    volumes:
+      - ./logs:/code/logs
+      - ./outputs:/code/outputs 
+      - ./data:/code/data 
+    environment:
+      - PYTHONPATH=/code 
+      - PYTHONBUFFERED=1 
+      - HYDRA_FULL_ERROR=1 
+    command: make train
 
   eval:
     build: 
@@ -42,3 +56,4 @@ services:
     build: 
       context: . 
       dockerfile: Dockerfile
+    command: make test
